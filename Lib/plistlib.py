@@ -46,7 +46,7 @@ Parse Plist example:
     print(pl["aKey"])
 """
 __all__ = [
-    "InvalidFileException", "FMT_XML", "FMT_BINARY", "load", "dump", "loads", "dumps", "UID"
+    "InvalidFileException", "FMT_XML", "FMT_BINARY", "load", "dump", "loads", "dumps", "UID", "CFUID"
 ]
 
 import binascii
