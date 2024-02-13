@@ -654,24 +654,24 @@ Compressor_init_xz(_lzma_state *state, lzma_stream *lzs,
                    int threads)
 {
     lzma_ret lzret;
+    lzma_filter filters[LZMA_FILTERS_MAX + 1];
 
-    if (threads == 1) {
+    if (filterspecs != Py_None) {
+        if (parse_filter_chain_spec(state, filters, filterspecs) == -1) {
+            return -1;
+        }
+    }
+
+    if (threads == -1) {
         if (filterspecs == Py_None) {
             lzret = lzma_easy_encoder(lzs, preset, check);
         } else {
-            lzma_filter filters[LZMA_FILTERS_MAX + 1];
-
-            if (parse_filter_chain_spec(state, filters, filterspecs) == -1) {
-                return -1;
-            }
-
             lzret = lzma_stream_encoder(lzs, filters, check);
-            free_filter_chain(filters);
         }
     } else {
         if (threads < 0) {
             PyErr_SetString(PyExc_ValueError,
-                            "threads must be a non-negative integer");
+                            "threads must be a non-negative integer or -1");
             return -1;
         }
 
@@ -695,12 +695,6 @@ Compressor_init_xz(_lzma_state *state, lzma_stream *lzs,
         if (filterspecs == Py_None) {
             lzret = lzma_stream_encoder_mt(lzs, &mt);
         } else {
-            lzma_filter filters[LZMA_FILTERS_MAX + 1];
-
-            if (parse_filter_chain_spec(state, filters, filterspecs) == -1) {
-                return -1;
-            }
-
             mt.filters = filters;
             lzret = lzma_stream_encoder_mt(lzs, &mt);
             free_filter_chain(filters);

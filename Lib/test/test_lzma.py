@@ -282,6 +282,12 @@ class CompressorDecompressorTestCase(unittest.TestCase):
         lzd = LZMADecompressor()
         self._test_decompressor(lzd, cdata, lzma.CHECK_CRC64)
 
+    def test_roundtrip_xz_nonchunk(self):
+        lzc = LZMACompressor(threads=-1)
+        cdata = lzc.compress(INPUT) + lzc.flush()
+        lzd = LZMADecompressor()
+        self._test_decompressor(lzd, cdata, lzma.CHECK_CRC64)
+
     def test_roundtrip_xz_mt(self):
         lzc = LZMACompressor(threads=0)
         cdata = lzc.compress(INPUT) + lzc.flush()
@@ -687,7 +693,7 @@ class FileTestCase(unittest.TestCase):
 
     def test_init_bad_threads(self):
         with self.assertRaises(ValueError):
-            LZMAFile(BytesIO(), "w", threads=-1)
+            LZMAFile(BytesIO(), "w", threads=-2)
 
     def test_init_with_preset_and_filters(self):
         with self.assertRaises(ValueError):

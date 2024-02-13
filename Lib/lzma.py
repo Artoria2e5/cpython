@@ -92,10 +92,12 @@ class LZMAFile(_compression.BaseStream):
         should have an entry for "id" indicating ID of the filter, plus
         additional entries for options to the filter.
 
-        threads (if provided) should be a non-negative integer indicating how
-        many background threads to create for the compressor (only when using
-        FORMAT_XZ, otherwise the compression will be single-threaded).
+        threads (if provided) should be a nonnegative integer or -1 indicating
+        how many background threads to create for the compressor (only when
+        using FORMAT_XZ, otherwise the compression will be single-threaded).
         If 0, the number of threads is set to the number of CPU cores.
+        If -1, the single-thread non-chunked compressor is used (the file will
+        not be available for parallel decompression).
         """
         self._fp = None
         self._closefp = False
